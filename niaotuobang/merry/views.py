@@ -30,6 +30,9 @@ class WishViewSet(viewsets.ModelViewSet):
     serializer_class = WishSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
+
 
 class TicketViewSet(viewsets.ModelViewSet):
     queryset = Ticket.objects.all()

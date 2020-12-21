@@ -13,6 +13,11 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class WishSerializer(serializers.ModelSerializer):
+    author = UserSerializer(read_only=True)
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'url']
+
     class Meta(object):
         model = Wish
         fields = '__all__'

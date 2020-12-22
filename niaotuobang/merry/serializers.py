@@ -26,6 +26,8 @@ class WishSerializer(serializers.ModelSerializer):
 
 
 class TicketSerializer(serializers.ModelSerializer):
+    sender = UserSerializer(read_only=True)
+    receiver = UserSerializer(read_only=True)
     class Meta(object):
         model = Ticket
         fields = '__all__'

@@ -1,3 +1,5 @@
+import random
+
 from django.contrib.auth.models import User
 
 from rest_framework import viewsets
@@ -38,3 +40,39 @@ class TicketViewSet(viewsets.ModelViewSet):
     queryset = Ticket.objects.all()
     serializer_class = TicketSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+
+class FetchTicketView(APIView):
+    def post(self, request):
+        if not request.user:
+            raise Exception('')
+
+        users = User.objects.all()
+        tickets = Ticket.objects.all()
+        has_send_ticket_user_map = {}
+        for ticket in tickets:
+            has_send_ticket_user_map[ticket.sender.id] = True
+            if ticket.receiver.id == request.user.id:
+                serializer = TicketSerializer(ticket, context={'request': request})
+                return Response(serializer.data)
+
+        candidates = []
+        for user in users:
+            if user.id == request.user.id:
+                continue
+            if user.id in has_send_ticket_user_map:
+                continue
+            candidates.append(user)
+
+        sender = random.choice(candidates)
+
+        ticket = Ticket(
+            sender=sender,
+            receiver=request.user,
+            address='请私聊',
+            tracking_no='下次再开发',
+            received=False)
+        ticket.save()
+
+        serializer = TicketSerializer(ticket, context={'request': request})
+        return Response(serializer.data)

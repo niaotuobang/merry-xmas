@@ -45,7 +45,7 @@ class TicketViewSet(viewsets.ModelViewSet):
 class FetchTicketView(APIView):
     def post(self, request):
         if not request.user:
-            raise Exception('请登录后操作')
+            raise serializers.ValidationError('请登录后操作')
 
         users = User.objects.all()
         tickets = Ticket.objects.all()
@@ -56,10 +56,10 @@ class FetchTicketView(APIView):
             if wish.author.id == request.user.id:
                 has_write = True
         if not has_write:
-            raise Exception('请填写愿望')
+            raise serializers.ValidationError('请填写愿望')
 
         if len(wishes) != len(ticket):
-            raise Exception('等待其他参与用户填写愿望')
+            raise serializers.ValidationError('等待其他参与用户填写愿望')
 
         # TODO add lock
         has_send_ticket_user_map = {}

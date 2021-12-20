@@ -45,10 +45,23 @@ class TicketViewSet(viewsets.ModelViewSet):
 class FetchTicketView(APIView):
     def post(self, request):
         if not request.user:
-            raise Exception('')
+            raise Exception('请登录后操作')
 
         users = User.objects.all()
         tickets = Ticket.objects.all()
+        wishes = Wish.objects.all()
+
+        has_write = False
+        for wish in wishes:
+            if wish.author.id == request.user.id:
+                has_write = True
+        if not has_write:
+            raise Exception('请填写愿望')
+
+        if len(wishes) != len(ticket):
+            raise Exception('等待其他参与用户填写愿望')
+
+        # TODO add lock
         has_send_ticket_user_map = {}
         for ticket in tickets:
             has_send_ticket_user_map[ticket.sender.id] = True
@@ -70,7 +83,7 @@ class FetchTicketView(APIView):
             sender=sender,
             receiver=request.user,
             address='请私聊',
-            tracking_no='下次再开发',
+            tracking_no='',
             received=False)
         ticket.save()
 

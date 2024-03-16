@@ -51,7 +51,7 @@ class FetchTicketView(APIView):
         users = User.objects.all()
         tickets = Ticket.objects.all()
         wishes = Wish.objects.all()
-
+        '''
         has_write = False
         for wish in wishes:
             if wish.author.id == request.user.id:
@@ -61,6 +61,7 @@ class FetchTicketView(APIView):
 
         if len(wishes) != len(ticket):
             raise serializers.ValidationError('等待其他参与用户填写愿望')
+        '''
 
         # TODO add lock
         has_send_ticket_user_map = {}

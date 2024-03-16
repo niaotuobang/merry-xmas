@@ -2,7 +2,5 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
-poetry.lock
-pyproject.toml
 .git/
 **/*db.sqlite3
